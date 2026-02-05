@@ -1,0 +1,56 @@
+import nodemailer from "nodemailer";
+import bcrypt from "bcryptjs";
+import User from "../models/usermodel";
+
+
+
+
+export const SendEmail=async({email,emailType ,userId}:any)=>{
+
+
+    try{
+
+const hashedPassword=await bcrypt.hash(userId.toString(),10)
+
+if(emailType=="VERIFY"){
+  await User.findByIdAndUpdate(userId,
+    {verifiedToken:hashedPassword, verifyTokenExpiery:Date.now()+3600000}
+  )
+}
+else if(emailType=="RESET"){
+  await User.findByIdAndUpdate(userId,
+    { forgotPasswordToken:hashedPassword,  forgotPasswordTokenExpiery:Date.now()+3600000}
+  )
+}
+
+
+
+   // Looking to send emails in production? Check out our Email API/SMTP product!
+const transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "5cb6ac97372373",
+    pass: "4b0938ed7377e6"
+  }
+});
+
+
+const mailOption={
+     from: 'nikhilgupta542006@gmail.com',
+    to: email, // this is a method 
+    subject:emailType,
+  //  text: "Hello world?", // Plain-text version of the message
+    html: "<b>Hello world?</b>", 
+}
+
+const mailResponce=await transport.sendMail(mailOption)
+return mailResponce
+
+
+}
+
+catch(error:any){
+throw new Error(error.message)
+}
+}
