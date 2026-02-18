@@ -1,4 +1,4 @@
-import {connect} from '@/src/dbConfig/dbconfig'
+import {connect} from '@/src/dbConfig/dbconfig'  // in next at every time we have to import this to tell that we are connect to db
 import User from '@/src/models/usermodel'
 import { NextResponse,NextRequest } from 'next/server'
 import bcrypt from 'bcryptjs';
@@ -6,10 +6,10 @@ import { SendEmail } from '@/src/helper/mailer';
 
 connect();
 
-export async function POST(request:NextRequest){
+export async function POST(req:NextRequest){
     try{
       
-        const reqBody=request.json()
+        const reqBody=req.json()
         const {username,email,password}=reqBody
         console.log(reqBody)
 
@@ -23,8 +23,13 @@ export async function POST(request:NextRequest){
         }
 
 
-        const salt = await bcrypt.genSalt(10);
-const hashedPassword = await bcrypt.hash(password, salt);
+        //Q- what is salt what is its function 
+
+        const salt = await bcrypt.genSalt(10);// here we generate a random hash word salt1 = X7s9@
+const hashedPassword = await bcrypt.hash(password, salt);   //here only we add this salt with  password  to make it unpridectable 
+//  salt2 = L2mK!
+// hash("nikhil123" + salt2) → zyx789
+// 
 // here we pass two parameter int he hash
 
 const newuser=new User({
@@ -32,14 +37,14 @@ const newuser=new User({
     email,
     password:hashedPassword
 })
-
+ console.log(newuser);
 const savedUser= await newuser.save()
 console.log(savedUser);
 
 /// sending email 
-    await SendEmail({email,emailType:"VERIFY",userTd:savedUser._id})
+    await SendEmail({email,emailType:"VERIFY",userId:savedUser._id})
 
-    }catch(error:any){
+    }catch(error:unknown){
        return  NextResponse.json({error:error.message},
         {status:500}
        )
