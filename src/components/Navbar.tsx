@@ -110,11 +110,11 @@ function Navbar({ className }: { className?: string }) {
         <Link href={"/"}>
         <MenuItem setActive={setActive} active={active} item="Home">
           <div className="flex flex-col space-y-4 text-sm">
-           s djd
-            {/* <HoveredLink href="/web-dev">Web Development</HoveredLink>
+           
+            <HoveredLink href="/web-dev">Web Development</HoveredLink>
             <HoveredLink href="/interface-design">Interface Design</HoveredLink>
             <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-            <HoveredLink href="/branding">Branding</HoveredLink> */}
+            <HoveredLink href="/branding">Branding</HoveredLink>
           </div>
         </MenuItem>
         </Link>

@@ -2,10 +2,13 @@ import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 import User from "../models/usermodel";
 
+interface EmailParams {
+  email: string;
+  emailType: "VERIFY" | "RESET";
+  userId: string;
+}
 
-
-
-export const SendEmail=async({email,emailType ,userId}:any)=>{
+export const SendEmail=async({email,emailType ,userId}:EmailParams)=>{
 
 
     try{
@@ -30,7 +33,7 @@ const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
   auth: {
-    user: "5cb6ac97372373",
+    user: "5cb6ac97372373",  // try to push these inside the env
     pass: "4b0938ed7377e6"
   }
 });
@@ -41,7 +44,8 @@ const mailOption={
     to: email, // this is a method 
     subject:emailType,
   //  text: "Hello world?", // Plain-text version of the message
-    html: "<b>Hello world?</b>", 
+    html:`<p>Click <a href="">here</a> to $
+    {emailType==="VERIFY" ?  "verify your browser}`
 }
 
 const mailResponce=await transport.sendMail(mailOption)
@@ -50,7 +54,8 @@ return mailResponce
 
 }
 
-catch(error:any){
-throw new Error(error.message)
+catch(error:unknown){
+const message = error instanceof Error ? error.message : "An unknown error occurred";
+throw new Error(message)
 }
 }
