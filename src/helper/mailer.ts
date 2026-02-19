@@ -44,8 +44,9 @@ const mailOption={
     to: email, // this is a method 
     subject:emailType,
   //  text: "Hello world?", // Plain-text version of the message
-    html:`<p>Click <a href="">here</a> to $
-    {emailType==="VERIFY" ?  "verify your browser}`
+     html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedPassword}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
+            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedPassword}
+            </p>`
 }
 
 const mailResponce=await transport.sendMail(mailOption)
